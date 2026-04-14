@@ -1,0 +1,7 @@
+.vscode
+.jupyter
+.direnv
+.venv
+bird_clip_model/model.safetensors
+bird_clip_model
+CUB_200_2011

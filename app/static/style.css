@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --accent: #a19afc;
+    --gap: 10px;
+    --radius: 4px;
+    --text: #ddd;
+    --subtext: #777;
+    --hidden: #333;
+    --section: #111;
+    --card: #181818;
+    --font: 'Inter', -apple-system, blinkmacsystemfont, sans-serif
+}
+
+body {
+    min-height: 100vh;
+    font-family: var(--font);
+    color: var(--text);
+    background: var(--section);
+}
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--gap);
+}
+
+.search-box {
+    display: flex;
+    gap: var(--gap);
+    margin-bottom: var(--gap);
+}
+
+#search-input {
+    flex: 1;
+
+    padding: 15px 20px;
+    border: 3px solid var(--card);
+    border-radius: var(--radius);
+
+    font-size: 1.1rem;
+    color: var(--text);
+
+    background: var(--card);
+    outline: none;
+
+    transition: border-color 0.2s;
+}
+
+#search-input:focus {
+    border-color: var(--accent);
+}
+
+#search-btn {
+    cursor: pointer;
+
+    padding: 15px 30px;
+    border: var(--radius) solid var(--accent);
+    border-radius: var(--radius);
+
+    font-size: 1.1rem;
+    color: var(--card);
+
+    background: var(--accent);
+
+    transition: background 0.2s;
+}
+
+#search-btn:hover {
+    background: var(--purple);
+}
+
+.results-grid {
+    display: flex;
+    gap: var(--gap);
+}
+
+.results-column {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--gap);
+}
+
+.result-card {
+    overflow: hidden;
+    break-inside: avoid;
+
+    border-radius: var(--radius);
+
+    background: var(--card);
+
+    transition: transform 0.2s;
+}
+
+.result-card:hover {
+    transform: scale(105%); 
+}
+
+.result-card img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.result-card .info {
+    padding: 12px;
+    background: var(--card);
+}
+
+.result-card .class-name {
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.result-card .score {
+    font-size: 0.9rem;
+    color: var(--accent);
+}
+
+.loading, .no-results, .error {
+    padding: 40px;
+    font-size: 1.1rem;
+    color: var(--subtext);
+    text-align: center;
+}
+
+.error {
+    color: var(--red);
+}
+
+@media (width <= 600px) {
+    .results-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}

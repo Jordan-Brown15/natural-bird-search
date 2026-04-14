@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main>
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="e.g. a blue bird with white wings">
+            <button id="search-btn">Search</button>
+        </div>
+        
+        <div id="results">
+            <div class="results-grid" id="results-grid"></div>
+        </div>
+    </main>
+        
+
+    <script>
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const resultsGrid = document.getElementById('results-grid');
+
+        let lastResults = [];
+
+        function renderColumns(results) {
+            const rect = resultsGrid.getBoundingClientRect();
+            const numColumns = Math.max(1, Math.floor(rect.width / 250));
+            const columns = Array.from({length: numColumns}, () => []);
+            results.forEach((r, i) => columns[i % numColumns].push(r));
+
+            resultsGrid.innerHTML = columns.map(col => `
+                <div class="results-column">
+                    ${col.map(r => `
+                        <div class="result-card">
+                            <img src="/images/${r.path}" alt="${r.class_name}" loading="lazy">
+                            <div class="info">
+                                <div class="class-name">${r.class_name}</div>
+                                <div class="score">${r.score.toFixed(3)}</div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        async function search() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            resultsGrid.innerHTML = '<div class="loading">Searching...</div>';
+
+            try {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                const results = await response.json();
+                lastResults = results;
+
+                if (results.length === 0) {
+                    resultsGrid.innerHTML = '<div class="no-results">No results found</div>';
+                    return;
+                }
+
+                renderColumns(results);
+            } catch (e) {
+                resultsGrid.innerHTML = '<div class="error">Error searching</div>';
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            if (lastResults.length > 0) renderColumns(lastResults);
+        });
+
+        searchBtn.addEventListener('click', search);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search();
+        });
+    </script>
+</body>
+</html>
