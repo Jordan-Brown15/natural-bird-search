@@ -14,9 +14,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.abspath(os.path.join(BASE_DIR, os.pardir))
 DATA_DIR = os.path.join(PROJECT_DIR, "CUB_200_2011")
 MODEL_PATH = os.path.join(PROJECT_DIR, "bird_clip_model")
-DATASET_URL = (
-    "https://data.caltech.edu/records/65de6-vp158/files/CUB_200_2011.tgz?download=1"
-)
 INDEX_PATH = os.path.join(PROJECT_DIR, "bird_index.pt")
 IMAGES_DIR = os.path.join(PROJECT_DIR, "CUB_200_2011/CUB_200_2011/images")
 CLASSES_PATH = os.path.join(PROJECT_DIR, "CUB_200_2011/CUB_200_2011/classes.txt")
@@ -27,7 +24,7 @@ def ensure_dataset():
 
     if not os.path.exists(os.path.join(DATA_DIR, "CUB_200_2011/images.txt")):
         print("Downloading dataset...")
-        tar_path = "./CUB_200_2011.tgz"
+        tar_path = os.path.join(DATA_DIR, "CUB_200_2011.tgz")
         urllib.request.urlretrieve(
             "https://data.caltech.edu/records/65de6-vp158/files/CUB_200_2011.tgz?download=1",
             tar_path,
@@ -39,9 +36,6 @@ def ensure_dataset():
         print("Dataset ready!")
     else:
         print("Dataset already available.")
-
-
-ensure_dataset()
 
 
 def reassemble_model():
@@ -59,8 +53,8 @@ def reassemble_model():
         print("Model reassembled.")
 
 
+ensure_dataset()
 reassemble_model()
-
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -127,4 +121,4 @@ def search():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=False)
