@@ -55,7 +55,7 @@ main {
     border-color: var(--accent);
 }
 
-#search-btn {
+#search-btn, #image-btn {
     cursor: pointer;
 
     padding: 15px 30px;
@@ -70,8 +70,12 @@ main {
     transition: background 0.2s;
 }
 
-#search-btn:hover {
-    background: var(--purple);
+#image-btn {
+    padding: 15px 20px;
+}
+
+#search-btn:hover, #image-btn:hover {
+    background: var(--accent);
 }
 
 .results-grid {
@@ -128,6 +132,20 @@ main {
     font-size: 1.1rem;
     color: var(--subtext);
     text-align: center;
+}
+
+.image-preview {
+    margin-bottom: var(--gap);
+}
+
+.image-preview img {
+    display: block;
+
+    max-width: 500px;
+    max-height: 250px;
+        margin: auto;
+    border: 3px solid var(--card);
+    border-radius: var(--radius);
 }
 
 .error {

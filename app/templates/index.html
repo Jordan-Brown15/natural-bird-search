@@ -1,35 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bird Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <main>
         <div class="search-box">
-            <input type="text" id="search-input" placeholder="e.g. a blue bird with white wings">
+            <input type="text" id="search-input" placeholder="a bird with a red head, black back and a white belly">
+            <button id="image-btn" title="Upload image"><i class="fa-solid fa-camera"></i></button>
             <button id="search-btn">Search</button>
         </div>
-        
+        <input type="file" id="image-input" accept="image/*" hidden>
+        <div class="image-preview" id="image-preview"></div>
         <div id="results">
             <div class="results-grid" id="results-grid"></div>
         </div>
     </main>
-        
+
 
     <script>
+        const imageInput = document.getElementById('image-input');
+        const imageBtn = document.getElementById('image-btn');
+        const imagePreview = document.getElementById('image-preview');
         const searchInput = document.getElementById('search-input');
         const searchBtn = document.getElementById('search-btn');
         const resultsGrid = document.getElementById('results-grid');
 
         let lastResults = [];
+        let selectedFile = null;
 
         function renderColumns(results) {
             const rect = resultsGrid.getBoundingClientRect();
             const numColumns = Math.max(1, Math.floor(rect.width / 250));
-            const columns = Array.from({length: numColumns}, () => []);
+            const columns = Array.from({ length: numColumns }, () => []);
             results.forEach((r, i) => columns[i % numColumns].push(r));
 
             resultsGrid.innerHTML = columns.map(col => `
@@ -47,30 +55,72 @@
             `).join('');
         }
 
+        window.addEventListener('resize', () => {
+            if (lastResults.length > 0) renderColumns(lastResults);
+        });
+
         async function search() {
             const query = searchInput.value.trim();
-            if (!query) return;
+
+            // Clear image as only one can be used at a time
+            if (query) {
+                selectedFile = null;
+                imageInput.value = '';
+                imagePreview.innerHTML = '';
+            }
 
             resultsGrid.innerHTML = '<div class="loading">Searching...</div>';
 
-            try {
-                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
-                const results = await response.json();
-                lastResults = results;
+            let results;
 
-                if (results.length === 0) {
-                    resultsGrid.innerHTML = '<div class="no-results">No results found</div>';
+            if (query) {
+                const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                results = await response.json();
+            } else if (selectedFile) {
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+                const response = await fetch('/search', { method: 'POST', body: formData });
+                if (!response.ok) {
+                    const res = await response.json();
+                    resultsGrid.innerHTML = `<div class="error">${res.error || 'Error searching'}</div>`;
                     return;
                 }
-
-                renderColumns(results);
-            } catch (e) {
-                resultsGrid.innerHTML = '<div class="error">Error searching</div>';
+                results = await response.json();
+            } else {
+                resultsGrid.innerHTML = '<div class="no-results">Enter a query or upload an image</div>';
+                return;
             }
+
+            lastResults = results;
+
+            if (results.length === 0) {
+                resultsGrid.innerHTML = '<div class="no-results">No results found</div>';
+                return;
+            }
+
+            renderColumns(results);
         }
 
-        window.addEventListener('resize', () => {
-            if (lastResults.length > 0) renderColumns(lastResults);
+        imageBtn.addEventListener('click', () => imageInput.click());
+
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+
+                // Clear text input because only 1 can be used at a time
+                searchInput.value = '';
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Query image">`;
+                };
+                reader.readAsDataURL(file);
+                search();
+            } else {
+                selectedFile = null;
+                imagePreview.innerHTML = '';
+            }
         });
 
         searchBtn.addEventListener('click', search);
@@ -79,4 +129,5 @@
         });
     </script>
 </body>
+
 </html>
