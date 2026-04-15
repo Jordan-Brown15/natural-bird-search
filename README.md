@@ -6,8 +6,7 @@ For my project I have created an application designed to assist bird watcher in 
 
 ![Demo Gif](.github/2026-04-1503-05-29-ezgif.com-video-to-gif-converter.gif)
 
-<!-- TODO: add record and link presentation -->
-[Presentation Video & Demo]()
+[Presentation Video & Demo](https://youtu.be/CVYOU6NjTWg?si=OBSGZowQa0nBBdOV)
 
 ## The Problem
 
@@ -101,5 +100,6 @@ python app.py
 
 ## References
 
-- Radford et al., "Learning Transferable Visual Models From Natural Language Supervision", ICML 2021
-- Wah et al., "The Caltech-UCSD Birds-200-2011 Dataset", 2011
+- Radford, A., Kim, J. W., Hallacy, C., Ramesh, A., Goh, G., Agarwal, S., ... & Sastry, G. (2021). Learning Transferable Visual Models From Natural Language Supervision. *International Conference on Machine Learning (ICML)*, 8748-8763. https://arxiv.org/abs/2103.00020
+
+- Wah, C., Branson, S., Welinder, P., Perona, P., & Belongie, S. (2011). The Caltech-UCSD Birds-200-2011 Dataset. *California Institute of Technology*. https://www.vision.caltech.edu/datasets/cub_200_2011/
